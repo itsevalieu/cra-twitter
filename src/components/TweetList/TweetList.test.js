@@ -1,18 +1,15 @@
-import "./App.css";
-import styled from "styled-components";
-import { useState } from "react";
-import HashtagContainer from "./components/HashtagContainer/HashtagContainer";
-import SearchBar from "./components/SearchBar/SearchBar";
-import TweetList from "./components/TweetList/TweetList";
+import { render, screen } from "@testing-library/react";
+import TweetList from "./TweetList";
 
-const Title = styled.h3`
-  font-size: 1rem;
-  font-weight: 500;
-  margin: 0 0;
-  margin-left: 15px;
-`;
-function App() {
-  const [tweets, setTweets] = useState([
+test("renders none if no hashtags", () => {
+  const tweets = [];
+  render(<TweetList tweets={tweets} />);
+  const tweetListElement = screen.getByText(/None/i);
+  expect(tweetListElement).toBeInTheDocument();
+});
+
+test("renders same num of hashtags if hashtags exists", () => {
+  const tweets = [
     {
       id: 1,
       avatar: "www.google.com",
@@ -37,26 +34,8 @@ function App() {
       url: "www.twitter.com",
       hashtags: ["rats", "lizards"],
     },
-  ]);
-  return (
-    <div className="App">
-      <Title>Tweet Feed</Title>
-      <SearchBar />
-      <HashtagContainer
-        hashtags={[
-          "cats",
-          "dogs",
-          "birds",
-          "horses",
-          "mice",
-          "alligators",
-          "rats",
-          "lizards",
-        ]}
-      />
-      <TweetList tweets={tweets} />
-    </div>
-  );
-}
-
-export default App;
+  ];
+  render(<TweetList tweets={tweets} />);
+  const tweetListElement = screen.getAllByTestId(/tweet/i);
+  expect(tweetListElement.length).toEqual(tweets.length);
+});

@@ -14,7 +14,12 @@ const Form = styled.form`
 export default function SearchBar() {
   return (
     <Form>
-      <input type="text" placeholder="Search by keyword" id="searchbar" />
+      <input
+        type="text"
+        placeholder="Search by keyword"
+        id="searchbar"
+        autoFocus
+      />
     </Form>
   );
 }

@@ -1,26 +1,29 @@
 # PSEUDOCODE
 
-Start-time: 8/12/21 9:30 PM - 10:30 PM
+Start-time:
+8/12/21 9:30 PM - 1:30 PM
+8/13/21 2:30 PM -
 
 ## Features
 
-- search bar, keyword lookup (api)
-  - keyword, setKeyword = useState('')
-  - debounce(handleKeypress, 3000) (how many seconds?)
-  - handleKeypress(keyword)
-  - userEffect(()=> { handleKeypress(keyword) }, keyword)
-- list tweets
-  - tweets, setTweets = useState([])
-    - test: if empty, expect 'none'
-    - test: if tweets.length > 0, expect node.length === tweets.length
-  - tweet, passed as props
-    - test: has avatar, username, text, url, and hashtags(if any)
+X search bar, keyword lookup (api)
+
+- keyword, setKeyword = useState('')
+- debounce(handleKeypress, 3000) (how many seconds?)
+- handleKeypress(keyword)
+- userEffect(()=> { handleKeypress(keyword) }, keyword)
+  X list tweets
+  X tweets, setTweets = useState([])
+  X test: if empty, expect 'none'
+  X test: if tweets.length > 0, expect node.length === tweets.length
+  X tweet, passed as props
+  X test: has avatar, username, text, url, and hashtags(if any)
 - sort order by popular (api)
   - apiUrl, setApiUrl = useState(baseUrl + RESULT_TYPE + COUNT)
-- hashtag containers, filter tweets (set, unset)
+    X hashtag containers, filter tweets (set, unset)
   - hashtags, setHashtags = useState([])
-    - test: if empty, expect text 'None'
-    - test: if hashtags.length > 0, expect node.length === tweets.length
+    X test: if empty, expect text 'None'
+    X test: if hashtags.length > 0, expect node.length === tweets.length
   - onClick, setHashTags(hashtag_id) => toggles hashtag list, if exists, remove, if doesn't exist, add, then filterTweets(hashtags)
     - test: hashtag that is set has classname to show
   - filterTweets(hashtags: string[]) => filters tweets
