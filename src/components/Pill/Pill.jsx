@@ -5,12 +5,14 @@ const Text = styled.span`
   border-radius: 50px;
   color: #4282b9;
   font-size: 1rem;
+  margin: 0 10px 10px 0;
   padding: 5px 10px;
   text-align: center;
-  &:before {
-    content: "#";
+  &:hover {
+    background: #efefef;
+    cursor: pointer;
   }
 `;
 export default function Pill({ text }) {
-  return <Text>{text}</Text>;
+  return <Text>#{text}</Text>;
 }
