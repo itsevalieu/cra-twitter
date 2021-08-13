@@ -6,24 +6,23 @@ Start-time:
 
 ## Features
 
-X search bar, keyword lookup (api)
-
-- keyword, setKeyword = useState('')
-- debounce(handleKeypress, 3000) (how many seconds?)
-- handleKeypress(keyword)
-- userEffect(()=> { handleKeypress(keyword) }, keyword)
-  X list tweets
-  X tweets, setTweets = useState([])
-  X test: if empty, expect 'none'
-  X test: if tweets.length > 0, expect node.length === tweets.length
-  X tweet, passed as props
-  X test: has avatar, username, text, url, and hashtags(if any)
+- X search bar, keyword lookup (api)
+  - keyword, setKeyword = useState('')
+  - debounce(handleKeypress, 3000) (how many seconds?)
+  - handleKeypress(keyword)
+  - userEffect(()=> { handleKeypress(keyword) }, keyword)
+- X list tweets
+  - X tweets, setTweets = useState([])
+  - X test: if empty, expect 'none'
+  - X test: if tweets.length > 0, expect node.length === tweets.length
+  - X tweet, passed as props
+  - X test: has avatar, username, text, url, and hashtags(if any)
 - sort order by popular (api)
   - apiUrl, setApiUrl = useState(baseUrl + RESULT_TYPE + COUNT)
     X hashtag containers, filter tweets (set, unset)
   - hashtags, setHashtags = useState([])
-    X test: if empty, expect text 'None'
-    X test: if hashtags.length > 0, expect node.length === tweets.length
+    - X test: if empty, expect text 'None'
+    - X test: if hashtags.length > 0, expect node.length === tweets.length
   - onClick, setHashTags(hashtag_id) => toggles hashtag list, if exists, remove, if doesn't exist, add, then filterTweets(hashtags)
     - test: hashtag that is set has classname to show
   - filterTweets(hashtags: string[]) => filters tweets
@@ -36,13 +35,13 @@ X search bar, keyword lookup (api)
 
 ## Components
 
-- App
-  - SearchBar
-  - TweetList
-    - TweetItem
-  - HashtagContainer
-  - Button
-  - Pill
+- X App
+  - X SearchBar
+  - X TweetList
+    - X TweetItem
+    - Button
+  - X HashtagContainer
+    - X Pill
 
 ## Endpoints
 

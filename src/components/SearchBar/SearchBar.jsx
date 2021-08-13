@@ -1,8 +1,13 @@
 import styled from "styled-components";
+import { device } from "../../styles/media-queries";
 
 const Form = styled.form`
   padding: 25px 15px;
   width: 100%;
+  @media ${device.desktop} {
+    grid-area: searchbar;
+    padding: 0px;
+  }
   input {
     border: 1px solid #ccc;
     border-radius: 3px;

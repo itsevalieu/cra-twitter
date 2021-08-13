@@ -5,7 +5,7 @@ const Tweet = styled.div`
   background-color: #ffffff;
   border-radius: 5px;
   box-shadow: 2px 2px 10px 1px #efefef;
-  border: 1px solid blue;
+  //   border: 1px solid blue;
   display: flex;
   flex-flow: row nowrap;
   padding: 15px 10px;

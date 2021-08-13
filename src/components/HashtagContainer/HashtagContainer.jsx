@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { device } from "../../styles/media-queries";
 import Pill from "../Pill/Pill";
 
 const Section = styled.section`
@@ -6,6 +7,11 @@ const Section = styled.section`
   border-radius: 5px;
   box-shadow: 2px 2px 10px 1px #efefef;
   padding: 15px 10px;
+  @media ${device.desktop} {
+    grid-area: sidebar;
+    min-width: 0;
+    min-height: 0;
+  }
   div {
     display: flex;
     flex-flow: row wrap;

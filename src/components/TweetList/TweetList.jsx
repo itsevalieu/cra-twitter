@@ -1,9 +1,13 @@
 import styled from "styled-components";
+import { device } from "../../styles/media-queries";
 import TweetItem from "../TweetItem/TweetItem";
 
 const TweetListSection = styled.section`
-  border: 1px solid red;
+  //   border: 1px solid red;
   margin: 10px 0;
+  @media ${device.desktop} {
+    grid-area: tweetlist;
+  }
 `;
 
 export default function TweetList({ tweets }) {

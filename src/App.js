@@ -1,15 +1,36 @@
-import "./App.css";
 import styled from "styled-components";
+import { device } from "./styles/media-queries";
 import { useState } from "react";
 import HashtagContainer from "./components/HashtagContainer/HashtagContainer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import TweetList from "./components/TweetList/TweetList";
 
+const AppContainer = styled.div`
+  background-color: #f8f9f9;
+  padding: 30px 0;
+  min-height: 100vh;
+  @media ${device.desktop} {
+    display: grid;
+    grid-template-rows: 0fr 0fr auto auto;
+    grid-template-columns: 3fr 1fr;
+    grid-template-areas:
+      "title title"
+      "searchbar sidebar"
+      "tweetlist sidebar"
+      "tweetlist .";
+    grid-gap: 25px;
+    margin-left: 0px;
+    padding: 30px 20%;
+  }
+`;
 const Title = styled.h3`
   font-size: 1rem;
   font-weight: 500;
-  margin: 0 0;
-  margin-left: 15px;
+  margin: 0 15px;
+  @media ${device.desktop} {
+    grid-area: title;
+    margin-left: 0px;
+  }
 `;
 function App() {
   const [tweets, setTweets] = useState([
@@ -39,7 +60,7 @@ function App() {
     },
   ]);
   return (
-    <div className="App">
+    <AppContainer>
       <Title>Tweet Feed</Title>
       <SearchBar />
       <HashtagContainer
@@ -55,7 +76,7 @@ function App() {
         ]}
       />
       <TweetList tweets={tweets} />
-    </div>
+    </AppContainer>
   );
 }
 
