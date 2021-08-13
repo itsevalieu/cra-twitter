@@ -70,7 +70,7 @@ Start-time: 8/12/21 9:30 PM - 10:30 PM
 ## Styles
 
 $background = #f8f9f9
-$link = #7dabd1
+$link = #4282b9
 $white = #fff
 $hashtag = #e7f3fa
 
