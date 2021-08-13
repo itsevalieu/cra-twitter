@@ -66,3 +66,23 @@ Start-time: 8/12/21 9:30 PM - 10:30 PM
 - MAX_ID = 'LAST TWEET ID (lowest)' -> (inclusive, so make it tweet_ids > MAX_ID)
 
 ## Caching -> I could use react-query since it includes caching, but lets just keep it simple
+
+## Styles
+
+$background = #f8f9f9
+$link = #7dabd1
+$white = #fff
+$hashtag = #e7f3fa
+
+mobile
+
+- grid-template-area: '
+  searchbar
+  hashtagcontainer
+  tweetlist
+  '
+  desktop
+- grid-template-area: '
+  searchbar hashtagcontainer
+  tweetlist hashtagcontainer
+  '
