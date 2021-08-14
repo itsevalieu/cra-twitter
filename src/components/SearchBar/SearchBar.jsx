@@ -16,7 +16,7 @@ const Form = styled.form`
   }
 `;
 
-export default function SearchBar() {
+export default function SearchBar({ handleChange }) {
   return (
     <Form>
       <input
@@ -24,6 +24,7 @@ export default function SearchBar() {
         placeholder="Search by keyword"
         id="searchbar"
         autoFocus
+        onChange={handleChange}
       />
     </Form>
   );

@@ -43,7 +43,6 @@ const Hashtags = styled.div`
   flex-flow: row wrap;
 `;
 export default function TweetItem({ tweet }) {
-  console.log("TWEET", tweet);
   return (
     <Tweet data-testid="tweet">
       <Avatar>

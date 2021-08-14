@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { device } from "./styles/media-queries";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HashtagContainer from "./components/HashtagContainer/HashtagContainer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import TweetList from "./components/TweetList/TweetList";
@@ -59,10 +59,19 @@ function App() {
       hashtags: ["rats", "lizards"],
     },
   ]);
+  const [keyword, setKeyword] = useState("");
+  const handleChange = (e) => {
+    console.log(e.target.value);
+    let keyword = e.target.value;
+    setTimeout(setKeyword(keyword), 3000);
+  };
+  useEffect(() => {
+    console.log("useEffect", keyword);
+  }, [keyword]);
   return (
     <AppContainer>
       <Title>Tweet Feed</Title>
-      <SearchBar />
+      <SearchBar handleChange={handleChange} />
       <HashtagContainer
         hashtags={[
           "cats",
