@@ -154,6 +154,10 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    npm install
    ```
+3. Created an .env file at the root folder structure. It should include:
+   ```sh
+   REACT_APP_TWITTER_BEARER_TOKEN={YOUR BEARER TOKEN FOR TWITTER}
+   ```
 
 ### Available Scripts
 
@@ -163,13 +167,15 @@ In the project directory, you can run:
     `sh npm start `
     Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
     The page will reload if you make edits. You will also see any lint errors in the console.
-
-2.  Test
+2.  Start the proxy server for development.
+    `sh npm run proxy`
+    You need to start the proxy server in order to make requests to the Twitter API.
+3.  Test
     `sh npm test `
     Launches the test runner in the interactive watch mode.
     See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-3.  Builds the app for production to the `build` folder.
+4.  Builds the app for production to the `build` folder.
 
         ```sh
         npm run build
