@@ -57,6 +57,9 @@
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
+        <li><a href="#user-requirements">User Requirements</a></li>
+        <li><a href="#acceptance-criteria">Acceptance Criteria</a></li>
+        <li><a href="#non-functional-requirements">Non-Functional Requirements</a></li>
         <li><a href="#built-with">Built With</a></li>
       </ul>
     </li>
@@ -156,7 +159,7 @@ This is an example of how to list things you need to use the software and how to
    ```
 3. Created an .env file at the root folder structure. It should include:
    ```sh
-   REACT_APP_TWITTER_BEARER_TOKEN={YOUR BEARER TOKEN FOR TWITTER}
+   REACT_APP_TWITTER_BEARER_TOKEN="YOUR BEARER TOKEN FOR TWITTER"
    ```
 
 ### Available Scripts
@@ -164,22 +167,36 @@ This is an example of how to list things you need to use the software and how to
 In the project directory, you can run:
 
 1.  Start the app in the development mode.
-    `sh npm start `
+
+    ```sh
+    npm start
+    ```
+
     Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
     The page will reload if you make edits. You will also see any lint errors in the console.
+
 2.  Start the proxy server for development.
-    `sh npm run proxy`
+
+    ```sh
+    npm run proxy
+    ```
+
     You need to start the proxy server in order to make requests to the Twitter API.
+
 3.  Test
-    `sh npm test `
+
+    ```sh
+    npm test
+    ```
+
     Launches the test runner in the interactive watch mode.
     See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 4.  Builds the app for production to the `build` folder.
 
-        ```sh
-        npm run build
-        ```
+    ```sh
+    npm run build
+    ```
 
     It correctly bundles React in production mode and optimizes the build for the best performance.
 
