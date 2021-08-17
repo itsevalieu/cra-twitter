@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Text = styled.span`
@@ -9,10 +10,22 @@ const Text = styled.span`
   padding: 5px 10px;
   text-align: center;
   &:hover {
-    background: #efefef;
+    background: #ccc;
     cursor: pointer;
   }
+  &.active {
+    background: #ccc;
+  }
 `;
-export default function Pill({ text }) {
-  return <Text>#{text}</Text>;
+export default function Pill({ text, filterTweetsByHashtag }) {
+  const [active, setActive] = useState(false);
+  const handleClick = () => {
+    setActive(!active);
+    filterTweetsByHashtag(text);
+  };
+  return (
+    <Text className={active ? "active" : null} onClick={() => handleClick()}>
+      #{text}
+    </Text>
+  );
 }

@@ -17,9 +17,9 @@ const Form = styled.form`
   }
 `;
 
-export default function SearchBar({ handleChange }) {
+export default function SearchBar({ handleChange, handleSubmit }) {
   return (
-    <Form>
+    <Form onSubmit={handleSubmit}>
       <input
         type="text"
         placeholder="&#xF002;   Search by keyword"
@@ -30,12 +30,3 @@ export default function SearchBar({ handleChange }) {
     </Form>
   );
 }
-
-/**
- * search bar, keyword lookup (api)
-  - needs search icon
-  - keyword, setKeyword = useState('')
-  - debounce(handleKeypress, 3000) (how many seconds?)
-  - handleKeypress(keyword)
-  - userEffect(()=> { handleKeypress(keyword) }, keyword)
- */
