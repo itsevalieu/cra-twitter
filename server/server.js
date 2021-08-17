@@ -18,18 +18,24 @@ const options = {
     Authorization: `Bearer ${process.env.REACT_APP_TWITTER_BEARER_TOKEN}`,
   },
 };
-
+const baseUrl = `https://api.twitter.com/1.1/search/tweets.json`;
 app.get("/tweets", async (req, res) => {
   const { query } = req;
-  const q =
-    typeof query.q === "string" && query.q.trim().length
-      ? query.q.trim()
-      : null;
-  const result_type = query.result_type;
-  if (!q.length) {
-    console.log("Uh oh, no keyword set yet.");
+  console.log("Query", query);
+  if (!query) {
+    console.log("Uh oh, no query set yet.");
   } else {
-    let urlQuery = `https://api.twitter.com/1.1/search/tweets.json?q=${q}&result_type=${result_type}&count=5&tweet_mode=extended`;
+    let urlQuery = `${baseUrl}?tweet_mode=extended&`;
+    for (let key in query) {
+      console.log(key, query[key]);
+      if (query[key] === query[query.length - 1]) {
+        urlQuery += `${key}=${query[key].trim()}`;
+      } else {
+        urlQuery += `${key}=${query[key].trim()}&`;
+      }
+    }
+    console.log("The urlQuery", urlQuery);
+
     await axios(urlQuery, options)
       .then((response) => {
         return res.json(response.data);

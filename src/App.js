@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import HashtagContainer from "./components/HashtagContainer/HashtagContainer";
 import SearchBar from "./components/SearchBar/SearchBar";
 import TweetList from "./components/TweetList/TweetList";
+import axios from "axios";
+import debounce from "lodash.debounce";
 
 const AppContainer = styled.div`
   background-color: #f8f9f9;
@@ -32,59 +34,137 @@ const Title = styled.h3`
     margin-left: 0px;
   }
 `;
+const LoadButton = styled.button`
+  width: 100%;
+  background-color: #ffffff;
+  padding: 25px;
+  border: none;
+  font-size: 1rem;
+  color: #4282b9;
+`;
 function App() {
-  const [tweets, setTweets] = useState([
-    {
-      id: 1,
-      avatar: "www.google.com",
-      username: "itsevalieu",
-      text: "Hey dude this is a test tweet",
-      url: "www.twitter.com",
-      hashtags: ["cats", "dogs", "birds"],
-    },
-    {
-      id: 2,
-      avatar: "www.google.com",
-      username: "evalieuraices",
-      text: "Hey check it out this is a different tweet wowowow",
-      url: "www.twitter.com",
-      hashtags: ["horses", "mice", "alligators", "rats", "lizards"],
-    },
-    {
-      id: 3,
-      avatar: "www.google.com",
-      username: "evacotive",
-      text: "Oh man oh man, this is such an exciting tweet, in fact it's so exciting that I'm gonna repeat what I just said to make this tweet longer. Oh man oh man, this is such an exciting tweet, in fact it's so exciting that I'm gonna repeat what I just said to make this tweet longer.",
-      url: "www.twitter.com",
-      hashtags: ["rats", "lizards"],
-    },
-  ]);
+  const [tweets, setTweets] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [loadMoreQuery, setLoadMoreQuery] = useState("");
+
   const handleChange = (e) => {
+    e.persist();
     console.log(e.target.value);
+    debouncedFn(e);
+  };
+
+  const debouncedFn = debounce((e) => {
     let keyword = e.target.value;
-    setTimeout(setKeyword(keyword), 3000);
+    setKeyword(keyword);
+  }, 300);
+
+  const searchKeyword = async (keyword) => {
+    if (!keyword.length) {
+      console.log("No keyword set yet.");
+      return;
+    } else {
+      console.log("Running search.");
+      let searchQuery = `/tweets?q=${keyword}&result_type=popular&count=5`;
+      try {
+        axios.get(searchQuery).then(async (res) => {
+          console.log("res", res);
+          let nextResultsQuery = res.data.search_metadata.next_results;
+          let newTweets = await cleanTweets(res.data.statuses);
+
+          setLoadMoreQuery(nextResultsQuery);
+          setTweets([...newTweets]);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
   useEffect(() => {
     console.log("useEffect", keyword);
+    searchKeyword(keyword);
+    // return () => {
+    //   console.log("Cleanup");
+    //   setKeyword("");
+    //   setTweets([]);
+    //   setLoadMoreQuery("");
+    // };
   }, [keyword]);
+
+  const cleanTweets = (dirtyTweets) => {
+    console.log("Cleaning tweets from dirtyTweets", dirtyTweets);
+    return dirtyTweets.map((dirtyTweet) => {
+      let hashtagList = dirtyTweet.entities.hashtags.length
+        ? dirtyTweet.entities.hashtags.map((hashtag) => hashtag.text.trim())
+        : [];
+      // console.log("hashtagList", hashtagList);
+      return {
+        id: dirtyTweet.id_str,
+        avatar: dirtyTweet.user.profile_image_url_https,
+        username: dirtyTweet.user.screen_name,
+        text: dirtyTweet.full_text
+          ? dirtyTweet.full_text.slice(
+              0,
+              dirtyTweet.full_text.indexOf("https://t.co/")
+            )
+          : "",
+        url: dirtyTweet.entities.urls.length
+          ? dirtyTweet.entities.urls[0].url
+          : null,
+        hashtags: hashtagList,
+      };
+    });
+  };
+  const loadMoreTweets = (loadMoreQuery) => {
+    if (!loadMoreQuery) {
+      console.log("No loadMoreQuery set.");
+      return;
+    } else {
+      console.log("Getting more tweets.");
+      let searchQuery = `/tweets${loadMoreQuery}`;
+      try {
+        axios.get(searchQuery).then(async (res) => {
+          console.log("res load more", res);
+          let nextResultsQuery = res.data.search_metadata.next_results;
+          let newTweets = await cleanTweets(res.data.statuses);
+          setLoadMoreQuery(nextResultsQuery);
+          console.log("Tweets", tweets);
+
+          setTweets([...tweets, ...newTweets]);
+          console.log("New tweets after load", newTweets);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+  const filterTweetsByHashtag = async (hashtag) => {
+    console.log("Clicked pill with #", hashtag);
+    let filteredTweets = await tweets.filter((tweet) => {
+      return tweet.hashtags.includes(hashtag);
+    });
+    console.log("Filtered Tweets", filteredTweets);
+    setTweets(filteredTweets);
+  };
   return (
     <AppContainer>
       <Title>Tweet Feed</Title>
-      <SearchBar handleChange={handleChange} />
+      <SearchBar handleChange={debounce(handleChange, 300)} />
       <HashtagContainer
-        hashtags={[
-          "cats",
-          "dogs",
-          "birds",
-          "horses",
-          "mice",
-          "alligators",
-          "rats",
-          "lizards",
-        ]}
+        tweets={tweets}
+        keyword={keyword}
+        filterTweetsByHashtag={filterTweetsByHashtag}
       />
       <TweetList tweets={tweets} />
+      {loadMoreQuery && tweets.length ? (
+        <LoadButton onClick={() => loadMoreTweets(loadMoreQuery)}>
+          Load More
+        </LoadButton>
+      ) : null}
+      {!loadMoreQuery && tweets.length ? (
+        <LoadButton disable onClick={() => loadMoreTweets(loadMoreQuery)}>
+          No More Tweets to Load
+        </LoadButton>
+      ) : null}
     </AppContainer>
   );
 }
