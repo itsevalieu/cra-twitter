@@ -13,6 +13,7 @@ const Form = styled.form`
     border-radius: 3px;
     padding: 15px;
     width: 100%;
+    font-family: FontAwesome, sans-serif;
   }
 `;
 
@@ -21,7 +22,7 @@ export default function SearchBar({ handleChange }) {
     <Form>
       <input
         type="text"
-        placeholder="Search by keyword"
+        placeholder="&#xF002;   Search by keyword"
         id="searchbar"
         autoFocus
         onChange={handleChange}

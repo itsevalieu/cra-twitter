@@ -14,14 +14,12 @@ const Tweet = styled.div`
   }
 `;
 const Avatar = styled.div`
-  border: 1px solid red;
-  border-radius: 50%;
-  height: 50px;
-  width: 50px;
   margin-right: 15px;
   img {
     height: 50px;
     width: 50px;
+    object-fit: cover;
+    border-radius: 50%;
   }
 `;
 const Content = styled.div`
@@ -43,10 +41,11 @@ const Hashtags = styled.div`
   flex-flow: row wrap;
 `;
 export default function TweetItem({ tweet }) {
+  // console.log("Tweet", tweet);
   return (
     <Tweet data-testid="tweet">
       <Avatar>
-        <img src="" alt={tweet.avatar} />
+        <img src={tweet.avatar} alt={tweet.avatar} />
       </Avatar>
       <div>
         <Content>
@@ -59,11 +58,11 @@ export default function TweetItem({ tweet }) {
           </p>
         </Content>
         <Hashtags>
-          {tweet.hashtags.length > 0
-            ? tweet.hashtags.map((hashtag) => (
-                <Pill key={hashtag} text={hashtag} />
+          {tweet.hashtags.length
+            ? tweet.hashtags.map((hashtag, key) => (
+                <Pill key={hashtag + key} text={hashtag} />
               ))
-            : "None"}
+            : null}
         </Hashtags>
       </div>
     </Tweet>
