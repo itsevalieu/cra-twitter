@@ -17,7 +17,7 @@ test("renders tweet", () => {
   expect(usernameElement).toBeInTheDocument();
   const textElement = screen.getByText(`${tweet.text}`);
   expect(textElement).toBeInTheDocument();
-  const urlElement = screen.getByText(`${tweet.url}`);
+  const urlElement = screen.getByText(`https://t.co/${tweet.id}`);
   expect(urlElement).toBeInTheDocument();
 });
 

@@ -14,12 +14,12 @@ const AppContainer = styled.div`
   @media ${device.desktop} {
     display: grid;
     grid-template-rows: 0fr 0fr auto auto;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 3fr 1.5fr;
     grid-template-areas:
       "title title"
       "searchbar sidebar"
       "tweetlist sidebar"
-      "tweetlist .";
+      "tweetlist sidebar";
     grid-gap: 25px;
     margin-left: 0px;
     padding: 30px 20%;
@@ -34,40 +34,35 @@ const Title = styled.h3`
     margin-left: 0px;
   }
 `;
-const LoadButton = styled.button`
-  width: 100%;
-  background-color: #ffffff;
-  padding: 25px;
-  border: none;
-  font-size: 1rem;
-  color: #4282b9;
-`;
 function App() {
   const [tweets, setTweets] = useState([]);
+  const [filteredTweets, setFilteredTweets] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [loadMoreQuery, setLoadMoreQuery] = useState("");
-
+  const [hashtagFilters, setHashtagFilters] = useState([]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   const handleChange = (e) => {
     e.persist();
     console.log(e.target.value);
     debouncedFn(e);
   };
-
   const debouncedFn = debounce((e) => {
     let keyword = e.target.value;
     setKeyword(keyword);
   }, 300);
-
   const searchKeyword = async (keyword) => {
     if (!keyword.length) {
       console.log("No keyword set yet.");
+      setTweets([]);
+      setHashtagFilters([]);
+      setFilteredTweets([]);
       return;
     } else {
-      console.log("Running search.");
       let searchQuery = `/tweets?q=${keyword}&result_type=popular&count=5`;
       try {
         axios.get(searchQuery).then(async (res) => {
-          console.log("res", res);
           let nextResultsQuery = res.data.search_metadata.next_results;
           let newTweets = await cleanTweets(res.data.statuses);
 
@@ -80,7 +75,6 @@ function App() {
     }
   };
   useEffect(() => {
-    console.log("useEffect", keyword);
     searchKeyword(keyword);
     // return () => {
     //   console.log("Cleanup");
@@ -96,7 +90,6 @@ function App() {
       let hashtagList = dirtyTweet.entities.hashtags.length
         ? dirtyTweet.entities.hashtags.map((hashtag) => hashtag.text.trim())
         : [];
-      // console.log("hashtagList", hashtagList);
       return {
         id: dirtyTweet.id_str,
         avatar: dirtyTweet.user.profile_image_url_https,
@@ -107,9 +100,7 @@ function App() {
               dirtyTweet.full_text.indexOf("https://t.co/")
             )
           : "",
-        url: dirtyTweet.entities.urls.length
-          ? dirtyTweet.entities.urls[0].url
-          : null,
+        url: `https://twitter.com/twitter/status/${dirtyTweet.id_str}`,
         hashtags: hashtagList,
       };
     });
@@ -123,48 +114,87 @@ function App() {
       let searchQuery = `/tweets${loadMoreQuery}`;
       try {
         axios.get(searchQuery).then(async (res) => {
-          console.log("res load more", res);
           let nextResultsQuery = res.data.search_metadata.next_results;
           let newTweets = await cleanTweets(res.data.statuses);
           setLoadMoreQuery(nextResultsQuery);
-          console.log("Tweets", tweets);
-
           setTweets([...tweets, ...newTweets]);
-          console.log("New tweets after load", newTweets);
         });
       } catch (err) {
         console.log(err);
       }
     }
   };
+
   const filterTweetsByHashtag = async (hashtag) => {
     console.log("Clicked pill with #", hashtag);
-    let filteredTweets = await tweets.filter((tweet) => {
-      return tweet.hashtags.includes(hashtag);
-    });
-    console.log("Filtered Tweets", filteredTweets);
-    setTweets(filteredTweets);
+    let currentHashtagFilterList = [...hashtagFilters];
+
+    console.log(
+      `Is the hashtag(${hashtag}) included in currentHashtagFilterList: ${currentHashtagFilterList}`
+    );
+    if (currentHashtagFilterList.includes(hashtag)) {
+      currentHashtagFilterList.splice(
+        currentHashtagFilterList.indexOf(hashtag),
+        1
+      );
+      let setTheseHashtags = [...currentHashtagFilterList];
+      setHashtagFilters(setTheseHashtags);
+    } else {
+      let setTheseHashtags = [...hashtagFilters, hashtag];
+      setHashtagFilters(setTheseHashtags);
+    }
   };
+
+  useEffect(() => {
+    console.log("Current hashtagFilters", hashtagFilters);
+    let currentTweets = tweets;
+    console.log("Current tweets", currentTweets);
+    if (hashtagFilters.length) {
+      let newfilteredTweets = [];
+      hashtagFilters.forEach((hTag) => {
+        if (newfilteredTweets.length) {
+          newfilteredTweets = newfilteredTweets.filter((tweet) => {
+            let tweetHashtags = tweet.hashtags
+              .join(" ")
+              .toLowerCase()
+              .split(" ");
+            return tweetHashtags.includes(hTag.toLowerCase());
+          });
+        } else {
+          newfilteredTweets = currentTweets.filter((tweet) => {
+            let tweetHashtags = tweet.hashtags
+              .join(" ")
+              .toLowerCase()
+              .split(" ");
+            return tweetHashtags.includes(hTag.toLowerCase());
+          });
+        }
+      });
+      console.log("Filtered Tweets", newfilteredTweets);
+      setFilteredTweets(newfilteredTweets);
+    } else {
+      setFilteredTweets(tweets);
+    }
+  }, [hashtagFilters]);
+
   return (
     <AppContainer>
       <Title>Tweet Feed</Title>
-      <SearchBar handleChange={debounce(handleChange, 300)} />
+      <SearchBar
+        handleChange={debounce(handleChange, 300)}
+        handleSubmit={handleSubmit}
+      />
       <HashtagContainer
         tweets={tweets}
         keyword={keyword}
         filterTweetsByHashtag={filterTweetsByHashtag}
       />
-      <TweetList tweets={tweets} />
-      {loadMoreQuery && tweets.length ? (
-        <LoadButton onClick={() => loadMoreTweets(loadMoreQuery)}>
-          Load More
-        </LoadButton>
-      ) : null}
-      {!loadMoreQuery && tweets.length ? (
-        <LoadButton disable onClick={() => loadMoreTweets(loadMoreQuery)}>
-          No More Tweets to Load
-        </LoadButton>
-      ) : null}
+      <TweetList
+        tweets={hashtagFilters.length ? filteredTweets : tweets}
+        filterTweetsByHashtag={filterTweetsByHashtag}
+        loadMoreQuery={loadMoreQuery}
+        loadMoreTweets={loadMoreTweets}
+      />
     </AppContainer>
   );
 }

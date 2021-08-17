@@ -4,11 +4,11 @@ import Pill from "../Pill/Pill";
 const Tweet = styled.div`
   background-color: #ffffff;
   border-radius: 5px;
-  box-shadow: 2px 2px 10px 1px #efefef;
-  //   border: 1px solid blue;
+  box-shadow: 0px 2px 3px 2px #efefef;
   display: flex;
   flex-flow: row nowrap;
   padding: 15px 10px;
+
   &:nth-child(even) {
     background-color: #f8f9f9;
   }
@@ -40,7 +40,7 @@ const Hashtags = styled.div`
   display: flex;
   flex-flow: row wrap;
 `;
-export default function TweetItem({ tweet }) {
+export default function TweetItem({ tweet, filterTweetsByHashtag }) {
   // console.log("Tweet", tweet);
   return (
     <Tweet data-testid="tweet">
@@ -53,14 +53,18 @@ export default function TweetItem({ tweet }) {
           <p>
             {tweet.text} {"  "}
             <a href={tweet.url} target="_blank" rel="noreferrer">
-              {tweet.url}
+              {`https://t.co/${tweet.id}`}
             </a>
           </p>
         </Content>
         <Hashtags>
           {tweet.hashtags.length
             ? tweet.hashtags.map((hashtag, key) => (
-                <Pill key={hashtag + key} text={hashtag} />
+                <Pill
+                  key={hashtag + key}
+                  text={hashtag}
+                  filterTweetsByHashtag={filterTweetsByHashtag}
+                />
               ))
             : null}
         </Hashtags>
