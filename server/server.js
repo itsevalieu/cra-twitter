@@ -27,15 +27,12 @@ app.get("/tweets", async (req, res) => {
   } else {
     let urlQuery = `${baseUrl}?tweet_mode=extended&`;
     for (let key in query) {
-      console.log(key, query[key]);
       if (query[key] === query[query.length - 1]) {
         urlQuery += `${key}=${query[key].trim()}`;
       } else {
         urlQuery += `${key}=${query[key].trim()}&`;
       }
     }
-    console.log("The urlQuery", urlQuery);
-
     await axios(urlQuery, options)
       .then((response) => {
         return res.json(response.data);
