@@ -1,9 +1,5 @@
 # PSEUDOCODE
 
-Start-time:
-8/12/21 9:30 PM - 1:30 PM
-8/13/21 2:30 PM -
-
 ## Features
 
 - X search bar, keyword lookup (api)
@@ -24,13 +20,10 @@ Start-time:
     - X test: if empty, expect text 'None'
     - X test: if hashtags.length > 0, expect node.length === tweets.length
   - X onClick, setHashTags(hashtag_id) => toggles hashtag list, if exists, remove, if doesn't exist, add, then filterTweets(hashtags)
-    - O test: hashtag that is set has classname to show
-  - O filterTweets(hashtags: string[]) => filters tweets
-    - O test: tweet with hashtag exists
-- Xload more to get more tweets
+  - X filterTweets(hashtags: string[]) => filters tweets
+- X load more to get more tweets
   - X onClick, loadMoreTweets(proxyUrl + keyword + RESULT_TYPE + COUNT + MAX_ID), setHashtags
-    - O test: load more button exists
-    - O test: list of tweets showing now has new tweets
+    - X test: load more button exists
 - X proxy server
   - X includes script to run proxy server
 
@@ -40,16 +33,24 @@ Start-time:
   - X SearchBar
   - X TweetList
     - X TweetItem
-    - Button
+      - X Pill
+    - X Button
   - X HashtagContainer
     - X Pill
 
 ## Endpoints
 
-- / => home
-- /search => https://api.twitter.com/1.1/search/tweets.json/
-  - Params: { keyword: string }
-  - Returns: { tweets: Tweet[] }
+- /tweets => https://api.twitter.com/1.1/search/tweets.json/
+  - Params: {
+    q: string,
+    result_type: string = popular
+    count: string = 5
+    }
+  - Returns: {
+    statuses: Tweet[],
+    search_metadata.next_results (for load more tweets)
+    }
+    -Notes: Needs "tweet_mode=extended" as part of query string to get full_text of tweet
 
 ## Data
 
@@ -57,8 +58,8 @@ Start-time:
   id: string,
   avatar: string (profile_image_url_https),
   username: string (user.screen_name),
-  text: string,
-  url: string, (entities.urls.url OR entities.urls.expanded_url)
+  text: string, (full_text)
+  url: string, (use the id)
   hashtags: string[] (entities.hashtags)
   }
 
@@ -69,13 +70,6 @@ Start-time:
 - MAX_ID = 'LAST TWEET ID (lowest)' -> (inclusive, so make it tweet_ids > MAX_ID)
 
 ## Caching -> I could use react-query since it includes caching, but lets just keep it simple
-
-## Styles
-
-$background = #f8f9f9
-$link = #4282b9
-$white = #fff
-$hashtag = #e7f3fa
 
 mobile
 
@@ -89,3 +83,7 @@ mobile
   searchbar hashtagcontainer
   tweetlist hashtagcontainer
   '
+
+## Current Bugs:
+
+- Hashtag list sometimes keeps the old hashtags from previous keyword searches (or if you're super slow at typing)
