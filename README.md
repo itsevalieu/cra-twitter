@@ -121,11 +121,16 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/itsevalieu/cra-twitter.git
    ```
-2. Install NPM packages
+2. Install NPM packages at the root folder
    ```sh
    npm install
    ```
-3. Created an .env file at the root folder structure. It should include:
+3. Install NPM packages in the ./server folder
+   ```sh
+   cd server
+   npm install
+   ```
+4. Created an .env file at the root folder structure. It should include:
    ```sh
    REACT_APP_TWITTER_BEARER_TOKEN="YOUR BEARER TOKEN FOR TWITTER"
    ```
