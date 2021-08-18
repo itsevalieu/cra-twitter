@@ -26,7 +26,7 @@ export default function TweetList({
   tweets,
   loadMoreQuery,
   loadMoreTweets,
-  filterTweetsByHashtag,
+  filterHashtags,
 }) {
   return (
     <TweetListSection>
@@ -35,7 +35,7 @@ export default function TweetList({
           <TweetItem
             key={tweet.id}
             tweet={tweet}
-            filterTweetsByHashtag={filterTweetsByHashtag}
+            filterHashtags={filterHashtags}
           />
         ))
       ) : (
