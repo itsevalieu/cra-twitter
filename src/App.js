@@ -35,57 +35,29 @@ const Title = styled.h3`
   }
 `;
 function App() {
-  const [tweets, setTweets] = useState([]);
-  const [filteredTweets, setFilteredTweets] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [tweets, setTweets] = useState([]);
   const [loadMoreQuery, setLoadMoreQuery] = useState("");
-  const [hashtagFilters, setHashtagFilters] = useState([]);
+  const [hashtags, setHashtags] = useState([]);
+  const [filteredHashtags, setFilteredHashtags] = useState([]);
+  const [filteredTweets, setFilteredTweets] = useState([]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
   };
+
   const handleChange = (e) => {
     e.persist();
-    console.log(e.target.value);
+    setHashtags([]);
     debouncedFn(e);
   };
+
   const debouncedFn = debounce((e) => {
     let keyword = e.target.value;
     setKeyword(keyword);
   }, 300);
-  const searchKeyword = async (keyword) => {
-    if (!keyword.length) {
-      console.log("No keyword set yet.");
-      setTweets([]);
-      setHashtagFilters([]);
-      setFilteredTweets([]);
-      return;
-    } else {
-      let searchQuery = `/tweets?q=${keyword}&result_type=popular&count=5`;
-      try {
-        axios.get(searchQuery).then(async (res) => {
-          let nextResultsQuery = res.data.search_metadata.next_results;
-          let newTweets = await cleanTweets(res.data.statuses);
-
-          setLoadMoreQuery(nextResultsQuery);
-          setTweets([...newTweets]);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-  useEffect(() => {
-    searchKeyword(keyword);
-    // return () => {
-    //   console.log("Cleanup");
-    //   setKeyword("");
-    //   setTweets([]);
-    //   setLoadMoreQuery("");
-    // };
-  }, [keyword]);
 
   const cleanTweets = (dirtyTweets) => {
-    console.log("Cleaning tweets from dirtyTweets", dirtyTweets);
     return dirtyTweets.map((dirtyTweet) => {
       let hashtagList = dirtyTweet.entities.hashtags.length
         ? dirtyTweet.entities.hashtags.map((hashtag) => hashtag.text.trim())
@@ -105,6 +77,7 @@ function App() {
       };
     });
   };
+
   const loadMoreTweets = (loadMoreQuery) => {
     if (!loadMoreQuery) {
       console.log("No loadMoreQuery set.");
@@ -125,33 +98,53 @@ function App() {
     }
   };
 
-  const filterTweetsByHashtag = async (hashtag) => {
-    console.log("Clicked pill with #", hashtag);
-    let currentHashtagFilterList = [...hashtagFilters];
+  useEffect(() => {
+    const searchKeyword = (keyword) => {
+      if (!keyword.length) {
+        console.log("No keyword set yet.");
+        setTweets([]);
+        setHashtags([]);
+        setFilteredHashtags([]);
+        setFilteredTweets([]);
+        return;
+      } else {
+        let searchQuery = `/tweets?q=${keyword}&result_type=popular&count=5`;
+        try {
+          axios.get(searchQuery).then(async (res) => {
+            let nextResultsQuery = res.data.search_metadata.next_results;
+            let newTweets = await cleanTweets(res.data.statuses);
 
-    console.log(
-      `Is the hashtag(${hashtag}) included in currentHashtagFilterList: ${currentHashtagFilterList}`
-    );
-    if (currentHashtagFilterList.includes(hashtag)) {
-      currentHashtagFilterList.splice(
-        currentHashtagFilterList.indexOf(hashtag),
-        1
-      );
-      let setTheseHashtags = [...currentHashtagFilterList];
-      setHashtagFilters(setTheseHashtags);
-    } else {
-      let setTheseHashtags = [...hashtagFilters, hashtag];
-      setHashtagFilters(setTheseHashtags);
-    }
-  };
+            setLoadMoreQuery(nextResultsQuery);
+            setTweets([...newTweets]);
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+    searchKeyword(keyword);
+  }, [keyword]);
 
   useEffect(() => {
-    console.log("Current hashtagFilters", hashtagFilters);
+    setHashtags([]);
+    const findHashtags = (tweets, keyword) => {
+      if (tweets && keyword) {
+        let newHashtags = [];
+        for (let tweet of tweets) {
+          newHashtags.push(...tweet.hashtags);
+        }
+        setHashtags([...new Set([...hashtags, ...newHashtags])]);
+      }
+    };
+    findHashtags(tweets, keyword);
+  }, [tweets, keyword]);
+
+  useEffect(() => {
+    let currentfilteredHashtags = filteredHashtags;
     let currentTweets = tweets;
-    console.log("Current tweets", currentTweets);
-    if (hashtagFilters.length) {
+    if (currentfilteredHashtags.length) {
       let newfilteredTweets = [];
-      hashtagFilters.forEach((hTag) => {
+      currentfilteredHashtags.forEach((hTag) => {
         if (newfilteredTweets.length) {
           newfilteredTweets = newfilteredTweets.filter((tweet) => {
             let tweetHashtags = tweet.hashtags
@@ -170,13 +163,26 @@ function App() {
           });
         }
       });
-      console.log("Filtered Tweets", newfilteredTweets);
       setFilteredTweets(newfilteredTweets);
     } else {
       setFilteredTweets(tweets);
     }
-  }, [hashtagFilters]);
+  }, [filteredHashtags]);
 
+  const filterHashtags = async (hashtag) => {
+    let currentHashtagFilterList = [...filteredHashtags];
+    if (currentHashtagFilterList.includes(hashtag)) {
+      currentHashtagFilterList.splice(
+        currentHashtagFilterList.indexOf(hashtag),
+        1
+      );
+      let setTheseHashtags = [...currentHashtagFilterList];
+      setFilteredHashtags(setTheseHashtags);
+    } else {
+      let setTheseHashtags = [...filteredHashtags, hashtag];
+      setFilteredHashtags(setTheseHashtags);
+    }
+  };
   return (
     <AppContainer>
       <Title>Tweet Feed</Title>
@@ -184,14 +190,10 @@ function App() {
         handleChange={debounce(handleChange, 300)}
         handleSubmit={handleSubmit}
       />
-      <HashtagContainer
-        tweets={tweets}
-        keyword={keyword}
-        filterTweetsByHashtag={filterTweetsByHashtag}
-      />
+      <HashtagContainer hashtags={hashtags} filterHashtags={filterHashtags} />
       <TweetList
-        tweets={hashtagFilters.length ? filteredTweets : tweets}
-        filterTweetsByHashtag={filterTweetsByHashtag}
+        tweets={filteredHashtags.length ? filteredTweets : tweets}
+        filterHashtags={filterHashtags}
         loadMoreQuery={loadMoreQuery}
         loadMoreTweets={loadMoreTweets}
       />
