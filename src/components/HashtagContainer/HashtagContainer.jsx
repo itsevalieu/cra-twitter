@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { device } from "../../styles/media-queries";
 import Pill from "../Pill/Pill";
@@ -25,40 +24,18 @@ const Title = styled.h3`
   margin: 0px 0 15px;
 `;
 
-export default function HashtagContainer({
-  tweets,
-  keyword,
-  filterTweetsByHashtag,
-}) {
-  const [filterableHashtags, setFilterableHashtags] = useState([]);
-  useEffect(() => {
-    // console.log("Do we got tweets?", tweets);
-    setFilterableHashtags([]);
-    if (tweets && keyword) {
-      let newHashtags = [];
-      for (let tweet of tweets) {
-        newHashtags.push(...tweet.hashtags);
-      }
-      setFilterableHashtags([
-        ...new Set([...filterableHashtags, ...newHashtags]),
-      ]);
-    }
-    return () => {
-      console.log("Cleanup for hashtags");
-      setFilterableHashtags([]);
-    };
-  }, [tweets, keyword]);
+export default function HashtagContainer({ hashtags, filterHashtags }) {
   return (
     <Sidebar>
       <Section>
         <Title>Filter by hashtag</Title>
         <div>
-          {filterableHashtags.length
-            ? filterableHashtags.map((hashtag, key) => (
+          {hashtags.length
+            ? hashtags.map((hashtag, key) => (
                 <Pill
                   key={hashtag + key}
                   text={hashtag}
-                  filterTweetsByHashtag={filterTweetsByHashtag}
+                  filterHashtags={filterHashtags}
                 />
               ))
             : "None"}

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import TweetItem from "./TweetItem";
 
-test("renders tweet", () => {
+test("renders tweet with attributes", () => {
   const tweet = {
     id: 1,
     avatar: "www.google.com",
@@ -19,9 +19,6 @@ test("renders tweet", () => {
   expect(textElement).toBeInTheDocument();
   const urlElement = screen.getByText(`https://t.co/${tweet.id}`);
   expect(urlElement).toBeInTheDocument();
+  const hashTagElements = screen.getAllByText(/#/i);
+  expect(hashTagElements.length).toEqual(tweet.hashtags.length);
 });
-
-/**
- * - tweet, passed as props
-    - test: has avatar, username, text, url, and hashtags(if any)
- */

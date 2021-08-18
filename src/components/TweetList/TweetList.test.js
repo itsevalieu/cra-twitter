@@ -8,7 +8,7 @@ test("renders none if no hashtags", () => {
   expect(tweetListElement).toBeInTheDocument();
 });
 
-test("renders same num of hashtags if hashtags exists", () => {
+test("renders same num of tweets if tweets exists", () => {
   const tweets = [
     {
       id: 1,
@@ -38,4 +38,38 @@ test("renders same num of hashtags if hashtags exists", () => {
   render(<TweetList tweets={tweets} />);
   const tweetListElement = screen.getAllByTestId(/tweet/i);
   expect(tweetListElement.length).toEqual(tweets.length);
+});
+
+test("renders load more button if loadMoreQuery and tweets exists", () => {
+  const loadMoreQuery = "query string with max_id";
+  const tweets = [
+    {
+      id: 1,
+      avatar: "www.google.com",
+      username: "itsevalieu",
+      text: "Hey dude this is a test tweet",
+      url: "www.twitter.com",
+      hashtags: ["cats", "dogs", "birds"],
+    },
+  ];
+  render(<TweetList tweets={tweets} loadMoreQuery={loadMoreQuery} />);
+  const loadMoreButtonElement = screen.getByText(/Load More/i);
+  expect(loadMoreButtonElement).toBeInTheDocument();
+});
+
+test("renders no more tweets to load button if tweets exists, but loadMoreQuery doesn't exist", () => {
+  const loadMoreQuery = "";
+  const tweets = [
+    {
+      id: 1,
+      avatar: "www.google.com",
+      username: "itsevalieu",
+      text: "Hey dude this is a test tweet",
+      url: "www.twitter.com",
+      hashtags: ["cats", "dogs", "birds"],
+    },
+  ];
+  render(<TweetList tweets={tweets} loadMoreQuery={loadMoreQuery} />);
+  const loadMoreButtonElement = screen.getByText(/No More Tweets to Load/i);
+  expect(loadMoreButtonElement).toBeInTheDocument();
 });

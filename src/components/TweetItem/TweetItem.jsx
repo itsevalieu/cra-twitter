@@ -40,8 +40,7 @@ const Hashtags = styled.div`
   display: flex;
   flex-flow: row wrap;
 `;
-export default function TweetItem({ tweet, filterTweetsByHashtag }) {
-  // console.log("Tweet", tweet);
+export default function TweetItem({ tweet, filterHashtags }) {
   return (
     <Tweet data-testid="tweet">
       <Avatar>
@@ -63,7 +62,7 @@ export default function TweetItem({ tweet, filterTweetsByHashtag }) {
                 <Pill
                   key={hashtag + key}
                   text={hashtag}
-                  filterTweetsByHashtag={filterTweetsByHashtag}
+                  filterHashtags={filterHashtags}
                 />
               ))
             : null}
